@@ -43,7 +43,7 @@ void testcase(){
 }
 
 int main(){
-  
+  ios_base::sync_with_stdio(false);
   int tests; cin>>tests;
   while(tests--){
     testcase();
