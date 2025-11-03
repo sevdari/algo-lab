@@ -4,5 +4,5 @@
 
 | **Week** | **Problem of the Week** | **1st Problem** | **2nd Problem** | **3rd Problem** | **4th Problem** |
 |:--:|:--|:--|:--|:--|:--|
-| **3** |  | [First Steps with BGL](week3/first-steps-with-bgl.cpp) | [Ant Challenge](week3/ant-challenge.cpp) | [Buddy Selection](week3/buddy-selection.cpp) | |
-| **4** |  | [Hit](week4/hit.cpp) | | | |
+| **3** |  | [First Steps with BGL](week3/first_steps_with_bgl.cpp) | [Ant Challenge](week3/ant_challenge.cpp) | [Buddy Selection](week3/buddy_selection.cpp) | |
+| **4** |  | [Hit](week4/hit.cpp) | [First Hit](week4/first_hit.cpp) | | |
