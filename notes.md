@@ -13,3 +13,4 @@ These notes are intended for me as a way to store possible improvements/ imperfe
 # Week 5
 - Implement Binary search on the number of rounds for Moving Books.
 - Implement Split&List for Asterix the Gaul.
+- Rewrite Boats so code is cleaner.

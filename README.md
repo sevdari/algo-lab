@@ -6,4 +6,4 @@
 |:--:|:--|:--|:--|:--|:--|
 | **3** |  | [First Steps with BGL](week3/first_steps_with_bgl.cpp) | [Ant Challenge](week3/ant_challenge.cpp) | [Buddy Selection](week3/buddy_selection.cpp) | |
 | **4** |  | [Hit](week4/hit.cpp) | [First Hit](week4/first_hit.cpp) | [Antenna](week4/antenna.cpp) | |
-| **5** |  |  | [Asterix the Gaul](week5/asterix_the_gaul.cpp) |  | |
+| **5** |  |  | [Asterix the Gaul](week5/asterix_the_gaul.cpp) | [Boats](week5/boats.cpp)  | |
