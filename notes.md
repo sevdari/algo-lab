@@ -14,3 +14,4 @@ These notes are intended for me as a way to store possible improvements/ imperfe
 - Implement Binary search on the number of rounds for Moving Books.
 - Implement Split&List for Asterix the Gaul.
 - Rewrite Boats so code is cleaner.
+- We got the solution for attack the clones, but implementation is not there.
