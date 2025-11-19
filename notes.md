@@ -15,3 +15,6 @@ These notes are intended for me as a way to store possible improvements/ imperfe
 - Implement Split&List for Asterix the Gaul.
 - Rewrite Boats so code is cleaner.
 - We got the solution for attack the clones, but implementation is not there.
+
+# Week 7
+- We got the concept of Germs correctly but still need to look at solution.
