@@ -9,5 +9,5 @@
 | **4** |  | [Hit](week4/hit.cpp) | [First Hit](week4/first_hit.cpp) | [Antenna](week4/antenna.cpp) | |
 | **5** |  |  | [Asterix the Gaul](week5/asterix_the_gaul.cpp) | [Boats](week5/boats.cpp)  | |
 | **6** |  |  | [Coin Tossing](week6/coin-tossing.cpp) | [London](week6/london.cpp) | |
-| **7** |  |  | [Bistro](week7/bistro.cpp) |  | |
+| **7** |  |  | [Bistro](week7/bistro.cpp) | [Germs](week7/germs.cpp) | |
 
