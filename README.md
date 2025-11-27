@@ -10,4 +10,5 @@
 | **5** |  |  | [Asterix the Gaul](week5/asterix_the_gaul.cpp) | [Boats](week5/boats.cpp)  | |
 | **6** |  |  | [Coin Tossing](week6/coin-tossing.cpp) | [London](week6/london.cpp) | |
 | **7** |  |  | [Bistro](week7/bistro.cpp) | [Germs](week7/germs.cpp) | |
+| **8** |  | [Maximise it](week8/maximise_it.cpp) |  | | |
 
