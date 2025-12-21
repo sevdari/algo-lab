@@ -11,4 +11,4 @@
 | **6** |  |  | [Coin Tossing](week6/coin-tossing.cpp) | [London](week6/london.cpp) | |
 | **7** |  |  | [Bistro](week7/bistro.cpp) | [Germs](week7/germs.cpp) | |
 | **8** |  | [Maximise it](week8/maximise_it.cpp) |  | | |
-| **9** |  | [Placing Knights](week9/placing_knights.cpp) | [Real Estate](week9/real_estate.cpp) | | |
+| **9** |  | [Placing Knights](week9/placing_knights.cpp) | [Real Estate](week9/real_estate.cpp) | [Canteen](week9/canteen.cpp) | |

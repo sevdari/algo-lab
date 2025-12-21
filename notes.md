@@ -18,3 +18,6 @@ These notes are intended for me as a way to store possible improvements/ imperfe
 
 # Week 7
 - We got the concept of Germs correctly but still need to look at solution.
+
+# Week 9
+- Come back to canteen and pick an algorithm to fix negative weights.
