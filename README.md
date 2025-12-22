@@ -13,3 +13,5 @@
 | **8** |  | [Maximise it](week8/maximise_it.cpp) |  | | |
 | **9** |  | [Placing Knights](week9/placing_knights.cpp) | [Real Estate](week9/real_estate.cpp) | [Canteen](week9/canteen.cpp) | |
 | **10** |  | [DHL](week10/dhl.cpp) | [Fleet Race](week10/fleetrace.cpp) |  | |
+| **14** |  | [Rapunzel](week14/rapunzel.cpp) |  |  | |
+
