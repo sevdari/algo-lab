@@ -21,3 +21,6 @@ These notes are intended for me as a way to store possible improvements/ imperfe
 
 # Week 9
 - Come back to canteen and pick an algorithm to fix negative weights.
+
+# Week 10
+- DHL, got the correct solution but performance is killed due too many chained rescursive calls.
