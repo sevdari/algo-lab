@@ -1,51 +1,65 @@
+#include <limits>
+#include <iostream>
+#include <iomanip>
+#include <string>
+#include <cmath>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/kruskal_min_spanning_tree.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
-#include <iostream>
-using namespace std;
 
 typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS,
-boost::no_property,
-boost::property<boost::edge_weight_t, int>
-> weighted_graph;
+  boost::no_property, boost::property<boost::edge_weight_t, int> >      weighted_graph;
+typedef boost::property_map<weighted_graph, boost::edge_weight_t>::type weight_map;
+typedef boost::graph_traits<weighted_graph>::edge_descriptor            edge_desc;
+typedef boost::graph_traits<weighted_graph>::vertex_descriptor          vertex_desc;
 
-typedef boost::graph_traits<weighted_graph>::edge_descriptor edge_desc;
+int furthest_distance(const weighted_graph &G, int s) {
+  int n = boost::num_vertices(G);
+  std::vector<int> dist_map(n);
 
-void testcase(){
-  int n, m; cin>>n>>m;
-  weighted_graph G(n);
-  for(int i = 0; i < m; i++){
-    int u, v, w; cin>>u>>v>>w;
-    boost::add_edge(u, v, w, G);
-  }
-  
-  vector<edge_desc> mst; 
-  vector<int> dist_map(n);
-  
-  boost::kruskal_minimum_spanning_tree(G, std::back_inserter(mst));
-  
-  boost::dijkstra_shortest_paths(G, 0,
-  boost::distance_map(boost::make_iterator_property_map(dist_map.begin(),
-  boost::get(boost::vertex_index, G))));
-  
-  int max_dist = 0, sum_mst = 0;
-  
-  for(int dist: dist_map){
-    max_dist = max(dist, max_dist);
-  }
-  
-  for(vector<edge_desc>::iterator it = mst.begin(); it!=mst.end(); it++){
-    sum_mst += boost::get(boost::edge_weight, G, *it);
-  }
-  
-  cout<<sum_mst<<" "<<max_dist<<endl;
-  
+  boost::dijkstra_shortest_paths(G, s,
+    boost::distance_map(boost::make_iterator_property_map(
+      dist_map.begin(), boost::get(boost::vertex_index, G))));
+
+    int res = 0;
+
+    for (int d : dist_map) {
+      if (d == std::numeric_limits<int>::max())
+        continue;
+
+      res = max(res, d);
+    }
+    
+    return res;
 }
 
-int main(){
-  ios_base::sync_with_stdio(false);
-  int tests; cin>>tests;
-  while(tests--){
-    testcase();
+void testcase() {
+  int n, m; cin>>n>>m;
+  weighted_graph G(4);
+  weight_map weights = boost::get(boost::edge_weight, G);
+  edge_desc e;
+  for(int i = 0; i < m; i++){
+    int u, v, w; cin>>u>>v>>w;
+    e = boost::add_edge(u, v, G).first; weights[e]=w;
   }
+  std::vector<edge_desc> mst;  
+  boost::kruskal_minimum_spanning_tree(G, std::back_inserter(mst));
+  int total = 0;
+  for (auto e : mst)
+    total += get(boost::edge_weight, G, e);
+  cout << total << " " << furthest_distance(G, 0) << endl;
+}
+
+int main() {
+  std::ios_base::sync_with_stdio(false);
+
+  int t;
+  std::cin >> t;
+  for (int i = 0; i < t; ++i)
+    testcase();
 }
