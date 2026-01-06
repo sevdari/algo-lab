@@ -1,100 +1,108 @@
-// ************************************
-// IN PROGRESS
-// only passes the first two test cases
-// ************************************
-
-#include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/kruskal_min_spanning_tree.hpp>
-#include <boost/graph/dijkstra_shortest_paths.hpp>
+#include <limits>
 #include <iostream>
+#include <iomanip>
+#include <string>
+#include <cmath>
+#include <algorithm>
+#include <vector>
+
 using namespace std;
 
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/prim_minimum_spanning_tree.hpp>
+
 typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS,
-boost::no_property,
-boost::property<boost::edge_weight_t, int>
-> weighted_graph;
+  boost::no_property, boost::property<boost::edge_weight_t, int> >      weighted_graph;
+typedef boost::property_map<weighted_graph, boost::edge_weight_t>::type weight_map;
+typedef boost::graph_traits<weighted_graph>::edge_descriptor            edge_desc;
+typedef boost::graph_traits<weighted_graph>::vertex_descriptor          vertex_desc;
 
-typedef boost::graph_traits<weighted_graph>::vertex_descriptor vertex_desc;
+struct WeightedEdge { int u, v, w; };
 
-typedef boost::graph_traits<weighted_graph>::edge_descriptor edge_desc;
 
-void run_dijkstra(
-  weighted_graph& G,
-  int s,
-  vector<int>& dist_map,
-  vector<vertex_desc>& pred_map
-  ){
-      boost::dijkstra_shortest_paths(G, s,
-      boost::distance_map(boost::make_iterator_property_map(dist_map.begin(),
-      boost::get(boost::vertex_index, G)))
-      .predecessor_map(boost::make_iterator_property_map(pred_map.begin(),
-      boost::get(boost::vertex_index, G))));
+int n, edges_count, species_count, a, b; 
+vector<pair<int, int>> edges;
+vector<vector<int>> time_per_edge;
+vector<int> hives;
+
+vector<WeightedEdge> get_prim_tree(int s){
+  // construct graph
+  weighted_graph G(n);
+  weight_map weights = boost::get(boost::edge_weight, G);
+  edge_desc ed;
+  for(int i = 0; i < edges_count; i++){
+    auto [u, v] = edges[i];
+    ed = boost::add_edge(u, v, G).first; weights[ed] = time_per_edge[i][s];
   }
-
-void contruct_shortest_path_tree(
-  weighted_graph& private_G, 
-  weighted_graph& public_G,
-  int hive
-  ){
-  int n = boost::num_vertices(private_G);
-  vector<int> dist_map(n);
-  vector<vertex_desc> pred_map(n);
-  
-  run_dijkstra(private_G, hive, dist_map, pred_map);
-  
-  // get edges in shortest paths tree
-  auto weightmap_public = boost::get(boost::edge_weight, public_G);
-
-  for (int tree = 0; tree < n; ++tree) {
-      if (tree == hive) continue;
-  
-      int pred = pred_map[tree];
-      auto private_edge = boost::edge(pred, tree, private_G).first;
-      int private_w = boost::get(boost::edge_weight, private_G, private_edge);
-  
-      auto [public_edge, exists] = boost::edge(pred, tree, public_G);
-      if (exists) {
-          int public_w = boost::get(boost::edge_weight, public_G, public_edge);
-          if (private_w < public_w)
-              boost::put(weightmap_public, public_edge, private_w);
-      } else {
-          auto [new_edge, inserted] = boost::add_edge(pred, tree, public_G);
-          boost::put(weightmap_public, new_edge, private_w);
-      }
-  }
+  vector<vertex_desc> p(n);
+  p[0] = hives[s];
+  //
+  boost::prim_minimum_spanning_tree(G, &p[0]);
+  vector<WeightedEdge> mst;
+  for (std::size_t i = 0; i != p.size(); ++i)
+    if (p[i] != i){
+        auto [ed, ok] = boost::edge(p[i], i, G);
+        mst.push_back({p[i], i, weights[ed]});
+    }
+    
+  return mst;
 }
 
-void testcase(){
-  int n, e, s, a, b; cin>>n>>e>>s>>a>>b;
-  vector<weighted_graph> private_networks(s, weighted_graph(n));
-  weighted_graph public_G(n);
+
+int dijkstra_dist(const weighted_graph &G, int a, int b) {
+  int n = boost::num_vertices(G);
+  std::vector<int> dist_map(n);
+
+  boost::dijkstra_shortest_paths(G, a,
+    boost::distance_map(boost::make_iterator_property_map(
+      dist_map.begin(), boost::get(boost::vertex_index, G))));
+
+  return dist_map[b];
+}
+
+void testcase() {
+  // read input
+  cin>>n>>edges_count>>species_count>>a>>b;
+  edges.clear();
+  time_per_edge.assign(edges_count, vector<int>(species_count));
   
-  // read edges and construct graphs
-  while(e--){
-    int tree_1, tree_2; cin>>tree_1>>tree_2;
-    for(int i = 0; i < s; i++){
-      int weight; cin >> weight;
-      boost::add_edge(tree_1, tree_2, weight, private_networks[i]);
+  for(int i = 0; i < edges_count; i++){
+    int u, v; cin>>u>>v; edges.push_back({u, v});
+    for(int j = 0; j < species_count; j++){
+      cin>>time_per_edge[i][j];
+    }
+  }
+  for(int i = 0; i < species_count; i++){
+    int hive; cin>>hive; hives.push_back(hive);
+  }
+  
+  weighted_graph G(n);
+  weight_map weights = boost::get(boost::edge_weight, G);
+  edge_desc ed;
+  
+  // start solution
+  vector<WeightedEdge> mst;
+  for(int s = 0; s < species_count; s++){
+    mst = get_prim_tree(s);
+    for(auto [u, v, w]: mst){
+      auto [ed, exists] = boost::edge(u, v, G); 
+      if(exists){
+        weights[ed] = min(weights[ed], w);
+      } else {
+        ed = boost::add_edge(u, v, G).first; weights[ed] = w;
+      }
     }
   }
   
-  // read hives
-  for(int i = 0; i < s; i++){
-    int hive; cin>>hive;
-    contruct_shortest_path_tree(private_networks[i], public_G, hive);
-  }
-  
-  vector<int> dist_map(n);
-  vector<vertex_desc> pred_map(n);
-  run_dijkstra(public_G, a, dist_map, pred_map);
-  cout<<dist_map[b]<<endl;
+  cout << dijkstra_dist(G, a, b) << endl;
   
 }
 
-int main(){
-  ios_base::sync_with_stdio(false);
-  int tests; cin>>tests;
-  while(tests--){
+int main() {
+  std::ios_base::sync_with_stdio(false);
+
+  int t;
+  std::cin >> t;
+  for (int i = 0; i < t; ++i)
     testcase();
-  }
 }
