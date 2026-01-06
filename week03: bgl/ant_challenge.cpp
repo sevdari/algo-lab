@@ -34,10 +34,9 @@ vector<WeightedEdge> get_prim_tree(int s){
     auto [u, v] = edges[i];
     ed = boost::add_edge(u, v, G).first; weights[ed] = time_per_edge[i][s];
   }
+  // run prim
   vector<vertex_desc> p(n);
-  p[0] = hives[s];
-  //
-  boost::prim_minimum_spanning_tree(G, &p[0]);
+  boost::prim_minimum_spanning_tree(G, &p[0], boost::root_vertex(hives[s]));
   vector<WeightedEdge> mst;
   for (std::size_t i = 0; i != p.size(); ++i)
     if (p[i] != i){
