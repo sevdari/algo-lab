@@ -1,100 +1,103 @@
-/*
-Still has a bug
-*/
+#include <limits>
 #include <iostream>
+#include <iomanip>
+#include <string>
+#include <cmath>
+#include <algorithm>
+#include <vector>
+#include <cassert>
+
 using namespace std;
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Polygon_2.h>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef K::Point_2 P;
-typedef K::Ray_2 R;
-typedef K::Segment_2 S;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel IK;
+typedef IK::Point_2 P;
+typedef IK::Segment_2 S;
 
-void get_legs(vector<S> &legs, int m){
-  long last_x = -1, last_y = -1;
-  for(int i = 0; i < m; i++){
-    long x, y; cin>>x>>y;
-    if(last_x != -1){
-      legs.push_back(S(P(last_x, last_y), P(x, y)));
-    }
-    last_x = x;
-    last_y = y;
-  }
+int n, m;
+vector<S> legs;
+vector<vector<P>> triangles;
+
+bool inside_triangle(const vector<P>& t, const P& p){
+  return 
+    !CGAL::right_turn(t[0], t[1], p) &&
+    !CGAL::right_turn(t[2], t[3], p) &&
+    !CGAL::right_turn(t[4], t[5], p);
 }
 
-void get_triangle(vector<P> &triangle){
-  for(int i = 0; i < 6; i++){
-    long q0, q1; cin>>q0>>q1;
-    triangle.push_back(P(q0, q1));
-  }
-  for(int j = 0; j < 6; j += 2){
-    if (CGAL::right_turn(triangle[j],triangle[j+1],triangle[(j+2)%6])) swap(triangle[j],triangle[j+1]);
-  }
+bool inside_triangle(const vector<P>& t, const S& s){
+  return 
+    inside_triangle(t, s.source()) && inside_triangle(t, s.target());
 }
 
-bool contains_point(const vector<P> &triangle, const P &p){
-  return (
-     !CGAL::right_turn(triangle[0], triangle[1], p) &&
-     !CGAL::right_turn(triangle[2], triangle[3], p) &&
-     !CGAL::right_turn(triangle[4], triangle[5], p)
-  );
-}
-
-bool contains_leg(vector<P> &triangle, S &leg){
-  return contains_point(triangle, leg.source()) && 
-         contains_point(triangle, leg.target());
-}
-
-void testcase(){
-  int m, n; cin>>m>>n;
-  vector<vector<bool>> covered(n, vector<bool>(m-1, false));
-  // legs
-  vector<S> legs;
-  get_legs(legs, m);
-  // triangles
-  for(int i = 0; i < n; i ++){
-    vector<P> triangle;
-    get_triangle(triangle);
-    for(int j = 0; j < m - 1; j++){
-      if(contains_leg(triangle, legs[j])){
-        covered[i][j] = true;
-      }
-    }
-  }
-  // sliding window
-  vector<int> current_cover(m-1, 0);
-  int left = 0, right = 0;
-  int min_cost = n;
-  for(int j = 0; j < m - 1; j++)
-    if(covered[0][j]) current_cover[j] += 1;
+void sliding_window(){
+  int left = 0, right = 0, count = 0;
+  vector<int> freq(m - 1, 0);
+  int best = n;
   while(right < n){
-    bool flag = true;
-    for(int j = 0; j < m-1; j++){
-      if(current_cover[j] == 0) { flag = false; break;}
-    }
-    if(flag) {
-      min_cost = min(min_cost, right - left + 1);
-      for(int j = 0; j < m - 1; j++){
-        if(covered[left][j]) current_cover[j] -= 1;
-      }
-      left += 1;
-    } else {
-      right += 1;
-      if(right >= n) break;
-      for(int j = 0; j < m - 1; j++){
-        if(covered[right][j]) current_cover[j] += 1;
+    // process new triangle
+    for(int i = 0; i < m - 1; i++){
+      S leg = legs[i];
+      if(inside_triangle(triangles[right], leg)){
+        if(freq[i] == 0) count++;
+        freq[i]++;
       }
     }
+    // update best
+    if(count==m - 1){
+      best = min(right - left + 1, best);
+      while(left < right && count == m - 1){
+        for(int i = 0; i < m - 1; i++){
+          S leg = legs[i];
+          if(inside_triangle(triangles[left], leg)){
+            freq[i]--;
+            if(freq[i] == 0) count--;
+          }
+        }
+        left ++;
+        if(count==m - 1) best = min(right - left + 1, best);
+      }
+    }
+    right++;
   }
-  cout<<min_cost<<endl;
+  cout << best << endl;
 }
 
-int main(){
-  ios_base::sync_with_stdio(false);
-  int tests; cin>>tests;
-  while(tests--){
-    testcase();
+void testcase() {
+  legs.clear();
+  triangles.clear();
+  cin>>m>>n;
+  
+  P last;
+  for(int i = 0; i < m; i++){
+    int x, y; cin>>x>>y;
+    P new_leg = P(x, y);
+    if(i!=0)
+      legs.push_back(S(last, new_leg));
+    last = new_leg;
   }
+  
+  for(int i = 0; i < n; i++){
+    vector<P> t;
+    for(int j = 0; j < 6; j++){
+      int x, y; cin>>x>>y;
+      t.push_back(P(x, y));
+    }
+    for (std::size_t j = 0; j < 6; j+=2)
+      if (CGAL::right_turn(t[j],t[j+1],t[(j+2)%6])) std::swap(t[j],t[j+1]);
+    triangles.push_back(t);
+  }
+  
+  sliding_window();
+  
+}
+
+int main() {
+  std::ios_base::sync_with_stdio(false);
+
+  int t;
+  std::cin >> t;
+  for (int i = 0; i < t; ++i)
+    testcase();
 }
