@@ -8,7 +8,7 @@
 | **2** | [Search Snippets](week02_dp/search_snippets.cpp) | [Burning Coins](week02_dp/burning_coins.cpp) | [Greyjoy](week02_dp/greyjoy.cpp) | [San Francisco](week02_dp/san_francisco.cpp) | |
 | **3** |  | [First Steps with BGL](week03_bgl/first_steps_with_bgl.cpp) | [Ant Challenge](week03_bgl/ant_challenge.cpp) | [Buddy Selection](week03_bgl/buddy_selection.cpp) | [Important Bridges](week03_bgl/important_bridges.cpp) |
 | **4** | [Fighting Pits of Meeren](week04_cgal/fighting_pits_of_meerens.cpp) | [Hit](week04_cgal/hit.cpp) | [First Hit](week04_cgal/first_hit.cpp) | [Antenna](week04_cgal/antenna.cpp) | [Hiking Maps](week04_cgal/hiking_maps.cpp) |
-| **5** |  |  | [Asterix the Gaul](week05/asterix_the_gaul.cpp) | [Boats](week05/boats.cpp)  | |
+| **5** |  | [Moving Books](week05_greedy/moving_books.cpp) | [Asterix the Gaul](week05_greedy/asterix_the_gaul.cpp) | [Boats](week05_greedy/boats.cpp)  | [Attack of the Clones](week05_greedy/attack_of_the_clones.cpp) |
 | **6** |  |  | [Coin Tossing](week06/coin-tossing.cpp) | [London](week06/london.cpp) | |
 | **7** |  |  | [Bistro](week07/bistro.cpp) | [Germs](week07/germs.cpp) | |
 | **8** |  | [Maximise it](week08/maximise_it.cpp) |  | | |
