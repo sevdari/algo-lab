@@ -14,6 +14,10 @@ These notes are intended for me as a way to store possible improvements/ imperfe
 - Fix Attack of Clones.
 - Clean up Boats?
 
+# Week 6
+- Look at Knights
+- Implement last test case of motorcycles.
+
 # Week 7
 - We got the concept of Germs correctly but still need to look at solution.
 
