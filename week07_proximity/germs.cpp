@@ -1,80 +1,97 @@
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
-#include <CGAL/Triangulation_data_structure_2.h>
-#include <CGAL/Triangulation_vertex_base_with_info_2.h>
-#include <CGAL/Delaunay_triangulation_2.h>
-#include <algorithm>
-#include <iostream>
 #include <limits>
+#include <iostream>
+#include <iomanip>
+#include <string>
+#include <cmath>
+#include <algorithm>
 #include <vector>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel IK;
-typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt EK;
-typedef CGAL::Triangulation_vertex_base_with_info_2<IK::FT,IK> vertex_t;
-typedef CGAL::Triangulation_face_base_2<IK> face_t;
-typedef CGAL::Triangulation_data_structure_2<vertex_t,face_t> triangulation_t;
-typedef CGAL::Delaunay_triangulation_2<IK,triangulation_t> delaunay_t;
+using namespace std;
 
-double ceil_to_double(EK::FT const & x){
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Delaunay_triangulation_2.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
+
+typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt SK;
+
+typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef CGAL::Delaunay_triangulation_2<K>  Triangulation;
+typedef Triangulation::Edge_iterator  Edge_iterator;
+typedef Triangulation::Finite_vertices_iterator Vertex_iterator;
+
+// global vars
+Triangulation tri;
+vector<K::Point_2> pts;
+long l, b, r, t; 
+
+double ceil_to_double(SK::FT const & x){
     double a = std::ceil(CGAL::to_double(x));
     while (a < x) a += 1;
     while (a-1 >= x) a -= 1;
     return a;
 }
-EK::FT S_to_hrs(EK::FT const & S){
-    return CGAL::sqrt((CGAL::sqrt(S) - 1) / 2);
+
+long squared_distance_to_time(SK::FT squared_distance){
+  SK::FT d = CGAL::sqrt(squared_distance);
+  if (d <= SK::FT(0.5)) return 0;
+  SK::FT death_time = CGAL::sqrt(d - SK::FT(0.5));
+  return ceil_to_double(death_time);
 }
 
-void test_case(int n){
-    int l, b, r, t;
-    std::cin >> l >> b >> r >> t;
-    std::vector<IK::Point_2> germs;
-    germs.reserve(n);
-    for (std::size_t i = 0; i < n; ++i) {
-        int x, y;
-        std::cin >> x >> y;
-        germs.push_back(IK::Point_2(x, y));
+K::FT calc_death_time(Vertex_iterator v){
+  K::Point_2 current_point = v->point();
+  // boundaries of the dish
+  K::FT min_dist = CGAL::squared_distance(current_point, K::Point_2(l, current_point.y()));
+  min_dist = min(min_dist, CGAL::squared_distance(current_point, K::Point_2(r, current_point.y())));
+  min_dist = min(min_dist, CGAL::squared_distance(current_point, K::Point_2(current_point.x(), b)));
+  min_dist = min(min_dist, CGAL::squared_distance(current_point, K::Point_2(current_point.x(), t)));
+
+  // incident Vertices
+  Triangulation::Vertex_circulator c = tri.incident_vertices(v);
+  do {
+    if(c==0) break;
+    if (!tri.is_infinite(c)){
+      min_dist = min(min_dist, CGAL::squared_distance(c->point(), current_point) / 4);
     }
-    delaunay_t trg;
-    trg.insert(germs.begin(), germs.end());
-    for (auto v = trg.finite_vertices_begin(); v != trg.finite_vertices_end(); ++v){
-        IK::Point_2 const & g = v->point();
-        IK::FT & info_g = v->info();
-        IK::FT min_horizontal = std::min(g.x() - l, r - g.x());
-        IK::FT min_vertical = std::min(g.y() - b, t - g.y());
-        IK::FT min_overall = std::min(min_horizontal, min_vertical);
-        info_g = 4 * min_overall * min_overall;
-    }
-    for (auto e = trg.finite_edges_begin(); e != trg.finite_edges_end(); ++e){
-        auto vi = e->first->vertex(trg.cw(e->second));
-        IK::Point_2 const & gi = vi->point();
-        IK::FT & info_gi = vi->info();
-        auto vj = e->first->vertex(trg.ccw(e->second));
-        IK::Point_2 const & gj = vj->point();
-        IK::FT & info_gj = vj->info();
-        IK::FT squared_distance = CGAL::squared_distance(gi, gj);
-        info_gi = std::min(info_gi, squared_distance);
-        info_gj = std::min(info_gj, squared_distance);
-    }
-    std::vector<IK::FT> min_S;
-    min_S.reserve(n);
-    
-    for (auto v = trg.finite_vertices_begin(); v != trg.finite_vertices_end(); ++v){
-        min_S.push_back(v->info());
-    }
-    std::sort(min_S.begin(), min_S.end());
-    
-    EK::FT first = S_to_hrs(EK::FT(min_S[0]));
-    EK::FT median = S_to_hrs(EK::FT(min_S[n/2]));
-    EK::FT last = S_to_hrs(EK::FT(min_S[n-1]));
-    std::cout
-        << ceil_to_double(first) << "␣"
-        << ceil_to_double(median) << "␣"
-        << ceil_to_double(last) << "\n";
+  } while (++c != tri.incident_vertices(v));
+  
+  return min_dist;
 }
-int main()
-{
-    std::ios_base::sync_with_stdio(false);
-    int n;
-    while (std::cin >> n && n != 0) test_case(n);
+
+void testcase(int n) {
+  // input
+  cin>>l>>b>>r>>t;
+  tri.clear(); pts.clear();
+  int x, y;
+  for(int i = 0; i < n; i++){
+    cin>>x>>y;
+    pts.push_back(K::Point_2(x, y));
+  }
+  
+  // solution
+  tri.insert(pts.begin(), pts.end());
+  vector<K::FT> death_time;
+  
+  for (Vertex_iterator v = tri.finite_vertices_begin(); v != tri.finite_vertices_end(); ++v){
+    death_time.push_back(calc_death_time(v));
+  }
+  
+  sort(death_time.begin(), death_time.end());
+  
+  // output
+  cout << squared_distance_to_time(death_time[0]) << " "
+       << squared_distance_to_time(death_time[n / 2]) << " "
+       << squared_distance_to_time(death_time[n - 1]) << endl;
+  
+}
+
+int main() {
+  std::ios_base::sync_with_stdio(false);
+  std::cout << std::fixed << std::setprecision(0);
+
+  int n;
+  std::cin >> n;
+  while(n!=0){
+    testcase(n); cin>>n;
+  }
 }
