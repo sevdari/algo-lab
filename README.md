@@ -10,7 +10,7 @@
 | **4** | [Fighting Pits of Meeren](week04_cgal/fighting_pits_of_meerens.cpp) | [Hit](week04_cgal/hit.cpp) | [First Hit](week04_cgal/first_hit.cpp) | [Antenna](week04_cgal/antenna.cpp) | [Hiking Maps](week04_cgal/hiking_maps.cpp) |
 | **5** | [Planet Express](week05_greedy/planet_express.cpp) | [Moving Books](week05_greedy/moving_books.cpp) | [Asterix the Gaul](week05_greedy/asterix_the_gaul.cpp) | [Boats](week05_greedy/boats.cpp)  | [Attack of the Clones](week05_greedy/attack_of_the_clones.cpp) |
 | **6** | [Motorcycles](week06_flows/motorcycles.cpp) | [Tiles](week06_flows/tiles.cpp) | [Coin Tossing](week06_flows/coin-tossing.cpp) | [London](week06_flows/london.cpp) | |
-| **7** |  |  | [Bistro](week07/bistro.cpp) | [Germs](week07/germs.cpp) | |
+| **7** |  |  | [Bistro](week07_proximity/bistro.cpp) | [Germs](week07_proximity/germs.cpp) | |
 | **8** |  | [Maximise it](week08/maximise_it.cpp) |  | | |
 | **9** |  | [Placing Knights](week09/placing_knights.cpp) | [Real Estate](week09/real_estate.cpp) | [Canteen](week09/canteen.cpp) | |
 | **10** |  | [DHL](week10/dhl.cpp) | [Fleet Race](week10/fleetrace.cpp) |  | |
