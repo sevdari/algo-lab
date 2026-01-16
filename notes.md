@@ -8,7 +8,6 @@ These notes are intended for me as a way to store possible improvements/ imperfe
 # Week 4
 - First Hit exercise does not implement clipping. Consider implementing it as exam prep.
 - Review floot_to_double func.
-- Solve Search Snippets then go back to hiking maps.
 
 # Week 5
 - Fix Attack of Clones.
@@ -19,7 +18,8 @@ These notes are intended for me as a way to store possible improvements/ imperfe
 - Implement last test case of motorcycles.
 
 # Week 7
-- We got the concept of Germs correctly but still need to look at solution.
+- Look up the solution of Germs to detail.
+- Clues we didnt construct the graph in O(nlogn). Asked question in Moodle.
 
 # Week 9
 - Come back to canteen and pick an algorithm to fix negative weights.

@@ -14,6 +14,7 @@ void testcase() {
 
 int main() {
 	std::ios_base::sync_with_stdio(false);
+    std::cout << std::fixed << std::setprecision(0);
 
 	int t;
 	std::cin >> t;
