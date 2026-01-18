@@ -11,7 +11,7 @@
 | **5** | [Planet Express](week05_greedy/planet_express.cpp) | [Moving Books](week05_greedy/moving_books.cpp) | [Asterix the Gaul](week05_greedy/asterix_the_gaul.cpp) | [Boats](week05_greedy/boats.cpp)  | [Attack of the Clones](week05_greedy/attack_of_the_clones.cpp) |
 | **6** | [Motorcycles](week06_flows/motorcycles.cpp) | [Tiles](week06_flows/tiles.cpp) | [Coin Tossing](week06_flows/coin-tossing.cpp) | [London](week06_flows/london.cpp) | |
 | **7** |  | [Bistro](week07_proximity/bistro.cpp) | [Germs](week07_proximity/germs.cpp) | [H1N1](week07_proximity/h1n1.cpp) | [Clues](week07_proximity/clues.cpp) |
-| **8** |  | [Maximise it](week08_lp/maximise_it.cpp) |  | | |
+| **8** |  | [Maximise it](week08_lp/maximise_it.cpp) | [In Ball](week08_lp/inball.cpp) | | |
 | **9** |  | [Placing Knights](week09/placing_knights.cpp) | [Real Estate](week09/real_estate.cpp) | [Canteen](week09/canteen.cpp) | |
 | **10** |  | [DHL](week10/dhl.cpp) | [Fleet Race](week10/fleetrace.cpp) |  | |
 | **14** |  | [Rapunzel](week14/rapunzel.cpp) |  |  | |
