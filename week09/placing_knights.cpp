@@ -1,10 +1,14 @@
-#include<iostream>
-#include<vector>
+#include <limits>
+#include <iostream>
+#include <iomanip>
+#include <string>
+#include <cmath>
 #include <algorithm>
-#include <queue>
+#include <vector>
 
 using namespace std;
 
+// BGL include
 #include <boost/graph/adjacency_list.hpp>
 
 // BGL flow include *NEW*
@@ -39,75 +43,63 @@ class edge_adder {
   }
 };
 
-
-vector<pair<int,int>> moves = {
-  {-1, -2}, 
-  {-1, 2}, 
-  {1, -2}, 
-  {1, 2}, 
-  {-2, -1}, 
-  {-2, 1}, 
-  {2, -1},
-  {2, 1}
+vector<pair<int, int>> moves = {
+   {-1, -2}, 
+   {-1, 2}, 
+   {1, -2}, 
+   {1, 2}, 
+   {-2, -1}, 
+   {-2, 1}, 
+   {2, -1},
+   {2, 1}
 };
 
-
-bool valid(int i, int j, int n){
-  return i >= 0 && j >= 0 && i < n && j < n;
+bool valid(int row, int col, const vector<vector<int>>& board){
+  if(row < 0 || row>=board.size()) return false;
+  if(col < 0 || col>=board.size()) return false;
+  return board[row][col] == 1;
 }
 
-
-void testcase(){
+void testcase() {
   int n; cin>>n;
-  int count=0;
+  vector<vector<int>> board(n, vector<int>(n));
   
-  // construct graph
   graph G(n*n);
   edge_adder adder(G);
+  
   const vertex_desc v_source = boost::add_vertex(G);
   const vertex_desc v_sink = boost::add_vertex(G);
   
-  // get board
-  vector<vector<bool>> board(n, vector<bool>(n, false));
-  for(int i=0; i<n; i++){
-    for(int j=0;j<n;j++){
-      int temp; cin>>temp;
-      if(temp) {
-        board[i][j] = true;
-        count += 1;
-      }
-      if((i+j)%2==0){
-        adder.add_edge(v_source, i*n+j, 1);
-      } else {
-        adder.add_edge(i*n+j, v_sink, 1);
-      }
-    }
-  }
-  
-  // add edges
-  for(int i=0; i<n; i++){
-    for(int j=0;j<n;j++){
+  int count = 0;
+  for(int i = 0; i < n; i++)
+    for(int j = 0; j < n; j++){
+      cin >> board[i][j];
       if(!board[i][j]) continue;
-      if((i + j)%2==0){
-        for (auto [dx, dy] : moves) {
-          if(valid(i + dx, j + dy, n) && board[i+dx][j+dy]){
-          adder.add_edge(i*n+j, (i+dx)*n+(j+dy), 1);
-          }
-        }
-      }
+      count++;
+      if((i + j) % 2)
+        adder.add_edge(v_source, n * i + j, 1);
+      else
+        adder.add_edge(n * i + j, v_sink, 1);
     }
-  }
+  
+  
+  for(int i = 0; i < n; i++)
+    for(int j = 0; j < n; j++)
+      for(auto [dx, dy]: moves)
+        if(board[i][j] && (i + j) % 2 && valid(i+dx, j+dy, board))
+          adder.add_edge(n * i + j, n * (i + dx) + j + dy, 1);
   
   long flow = boost::push_relabel_max_flow(G, v_source, v_sink);
-  cout << count - flow << endl;
+  cout << count - flow << "\n";
   
 }
 
-int main(){
-  ios_base::sync_with_stdio(false);
-  int t; cin>>t;
-  while(t>0){
+int main() {
+  std::ios_base::sync_with_stdio(false);
+    std::cout << std::fixed << std::setprecision(0);
+
+  int t;
+  std::cin >> t;
+  for (int i = 0; i < t; ++i)
     testcase();
-    t--;
-  }
 }
