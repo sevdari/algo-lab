@@ -1,7 +1,13 @@
-///1
+#include <limits>
 #include <iostream>
-#include<algorithm>
-#include<vector>
+#include <iomanip>
+#include <string>
+#include <cmath>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/cycle_canceling.hpp>
 #include <boost/graph/push_relabel_max_flow.hpp>
@@ -17,10 +23,10 @@ typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::directedS, boost:
                 boost::property <boost::edge_weight_t, long> > > > > graph; // new! weightmap corresponds to costs
 
 typedef boost::graph_traits<graph>::edge_descriptor             edge_desc;
-typedef boost::graph_traits<graph>::vertex_descriptor           vertex_desc;
-
-
 typedef boost::graph_traits<graph>::out_edge_iterator           out_edge_it; // Iterator
+
+typedef traits::vertex_descriptor vertex_desc;
+typedef traits::edge_descriptor edge_desc;
 
 // custom edge adder class
 class edge_adder {
@@ -43,60 +49,60 @@ class edge_adder {
   }
 };
 
-
-using namespace std;
-
-void testcase(){
+void testcase() {
   // read input
-  int n, m, s; cin>>n>>m>>s;
-  vector<int> limits(s);
-  vector<int> belongs_to(m);
-  for(int i=0; i<s; i++){
-    cin>>limits[i];
-  }
-  for(int i=0; i<m; i++){
-    cin>>belongs_to[i];
+  int n; cin>>n;
+  vector<int> menus(n), cost(n), students(n), prices(n), freezer(n-1), energy_cost(n-1);
+  int total_students = 0, MAX_PRICE = 20;
+  
+  for(int i = 0; i < n; i++)
+    cin >> menus[i] >> cost[i];
+  
+  for(int i = 0; i < n; i++){
+    cin >> students[i] >> prices[i];
+    total_students += students[i];
   }
   
-  // construct graph
-  graph G(n+m+s);
-  const vertex_desc v_source = boost::add_vertex(G);
-  const vertex_desc v_sink = boost::add_vertex(G);
-  edge_adder adder(G);  
+  for(int i = 0; i < n - 1; i++)
+    cin >> freezer[i] >> energy_cost[i];
+  
+  // solution
+  graph G(n);
+  edge_adder adder(G);
   auto c_map = boost::get(boost::edge_capacity, G);
   auto r_map = boost::get(boost::edge_reverse, G);
   auto rc_map = boost::get(boost::edge_residual_capacity, G);
+  const vertex_desc v_source = boost::add_vertex(G);
+  const vertex_desc v_sink = boost::add_vertex(G);
   
-  for(int i=0; i<n; i++){
-    adder.add_edge(v_source, i, 1, 0); // each person gets most one bid
+  // the crux of the problem
+  for(int i = 0; i < n; i++){
+    adder.add_edge(v_source, i, menus[i], cost[i]);
+    if(i != n - 1) adder.add_edge(i, i+1, freezer[i], energy_cost[i]);
+    adder.add_edge(i, v_sink, students[i], MAX_PRICE-prices[i]);
   }
   
-  for(int i=0; i<n;i++){
-    for(int j=0; j<m; j++){
-      int bid; cin>>bid;
-      adder.add_edge(i, n + j, 1, -bid); // min cost so negative bid
-    }
-  }
+  // find flow and cost
+  boost::successive_shortest_path_nonnegative_weights(G, v_source, v_sink);
+  int profit = -boost::find_flow_cost(G);
   
-  for(int j=0; j<m; j++){
-    adder.add_edge(n+j, n+m+belongs_to[j]-1, 1, 0); // connect lots to state
+  int flow = 0;
+  out_edge_it e, eend;
+
+  for (boost::tie(e, eend) = boost::out_edges(boost::vertex(v_sink,G), G); e != eend; ++e) {
+    profit += (c_map[r_map[*e]] - rc_map[r_map[*e]]) * MAX_PRICE;
+    flow += rc_map[*e] - c_map[*e];  
   }
-  
-  for(int j=0; j<s; j++){
-    adder.add_edge(n+m+j, v_sink, limits[j], 0); // connect states to sink
-  }
-  
-  int flow1 = boost::push_relabel_max_flow(G, v_source, v_sink);
-  boost::cycle_canceling(G);
-  int cost1 = boost::find_flow_cost(G);
-  cout << flow1 << " " << -cost1 << "\n"; 
+  cout << (flow==total_students ? "possible " : "impossible ");
+  cout << flow << " " << profit << endl;
 }
 
-int main(){
-  ios_base::sync_with_stdio(false);
-  int t; cin>>t;
-  while(t){
-    t--;
+int main() {
+  std::ios_base::sync_with_stdio(false);
+  std::cout << std::fixed << std::setprecision(0);
+
+  int t;
+  std::cin >> t;
+  for (int i = 0; i < t; ++i)
     testcase();
-  }
 }

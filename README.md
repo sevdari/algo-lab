@@ -12,7 +12,7 @@
 | **6** | [Motorcycles](week06_flows/motorcycles.cpp) | [Tiles](week06_flows/tiles.cpp) | [Coin Tossing](week06_flows/coin-tossing.cpp) | [London](week06_flows/london.cpp) | |
 | **7** |  | [Bistro](week07_proximity/bistro.cpp) | [Germs](week07_proximity/germs.cpp) | [H1N1](week07_proximity/h1n1.cpp) | [Clues](week07_proximity/clues.cpp) |
 | **8** | [Kingdom Defense](week08_lp/kingdom_defense.cpp) | [Maximise it](week08_lp/maximise_it.cpp) | [Diet](week08_lp/diet.cpp) |[In Ball](week08_lp/inball.cpp) | |
-| **9** |  | [Placing Knights](week09/placing_knights.cpp) | [Real Estate](week09/real_estate.cpp) | [Canteen](week09/canteen.cpp) | |
+| **9** |  | [Placing Knights](week09_advanced_flows/placing_knights.cpp) | [Real Estate](week09_advanced_flows/real_estate.cpp) | [Canteen](week09_advanced_flows/canteen.cpp) | [Algocoon](week09_advanced_flows/algocoon.cpp) |
 | **10** |  | [DHL](week10/dhl.cpp) | [Fleet Race](week10/fleetrace.cpp) |  | |
 | **14** |  | [Rapunzel](week14/rapunzel.cpp) |  |  | |
 

@@ -1,7 +1,12 @@
-///1
-#include<iostream>
-#include<algorithm>
-#include<vector>
+#include <limits>
+#include <iostream>
+#include <iomanip>
+#include <string>
+#include <cmath>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
 
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/cycle_canceling.hpp>
@@ -18,10 +23,8 @@ typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::directedS, boost:
                 boost::property <boost::edge_weight_t, long> > > > > graph; // new! weightmap corresponds to costs
 
 typedef boost::graph_traits<graph>::edge_descriptor             edge_desc;
-typedef boost::graph_traits<graph>::vertex_descriptor           vertex_desc;
-
-
 typedef boost::graph_traits<graph>::out_edge_iterator           out_edge_it; // Iterator
+typedef traits::vertex_descriptor vertex_desc;
 
 // custom edge adder class
 class edge_adder {
@@ -44,60 +47,64 @@ class edge_adder {
   }
 };
 
-using namespace std;
-
-void testcase(){
-  int n; cin>>n;
-  vector<int> menu(n), cost(n), stud(n), price(n), vol(n), energy(n);
+void testcase() {
+  // input
+  int N, M, S; cin>>N>>M>>S;
+  vector<int> state_limits(S), belongs_to_state(M);
+  vector<vector<int>> bids(N, vector<int>(M));
+  for(int i = 0; i < S; i++)
+    cin>>state_limits[i];
+  for(int i = 0; i < M; i++)
+    cin>>belongs_to_state[i];
+  for(int i = 0; i < N; i++)
+    for(int j = 0; j < M; j++)
+      cin>>bids[i][j];
   
-  for(int i = 0; i < n; i++)
-    cin>>menu[i]>>cost[i];
-  
-  long total_students = 0;
-  for(int i = 0; i < n; i++){
-    cin>>stud[i]>>price[i];
-    total_students += stud[i];
-  }
-    
-  for(int i = 0; i < n - 1; i++)
-    cin>>vol[i]>>energy[i];
-  
-  graph G(2*n);
+  // solution
+  graph G(N+M+S);
   const vertex_desc v_source = boost::add_vertex(G);
   const vertex_desc v_sink = boost::add_vertex(G);
-  edge_adder adder(G);  
+  edge_adder adder(G);
   auto c_map = boost::get(boost::edge_capacity, G);
   auto r_map = boost::get(boost::edge_reverse, G);
   auto rc_map = boost::get(boost::edge_residual_capacity, G);
   
-  for(int i = 0; i < n; i++){
-    adder.add_edge(v_source, i, menu[i], 0); // source to canteen
-    adder.add_edge(i, n+i, stud[i], cost[i] - price[i]); // canteen to students
-    if(i < n -1) 
-      adder.add_edge(i, i+1, vol[i], -energy[i]); // store in fridge
-    adder.add_edge(n+i, v_sink, stud[i], 0); // students to sink
-  }
+  // source to buyers
+  for(int i = 0; i < N; i++)
+    adder.add_edge(v_source, i, 1, 0);
   
+  // buyers to properties
+  for(int i = 0; i < N; i++)
+    for(int j = 0; j < M; j++)
+      adder.add_edge(i, N+j, 1, 100-bids[i][j]);
+  
+  // properties to states
+  for(int i = 0; i < M; i++)
+    adder.add_edge(N + i, N + M + belongs_to_state[i] - 1, 1, 0);
+  
+  // states to sink
+  for(int i = 0; i < S; i++)
+    adder.add_edge(N + M + i, v_sink, state_limits[i], 0);
+  
+  // solve for flow and cost
   boost::successive_shortest_path_nonnegative_weights(G, v_source, v_sink);
-  int cost1 = boost::find_flow_cost(G);
+  int cost = boost::find_flow_cost(G);
   
-  long flow1 = 0;
+  int flow = 0;
   out_edge_it e, eend;
-  for (boost::tie(e, eend) = boost::out_edges(v_source, G); e != eend; ++e) {
-    flow1 += c_map[*e] - rc_map[*e];
+  for (boost::tie(e, eend) = boost::out_edges(boost::vertex(v_source,G), G); e != eend; ++e) {
+    flow += c_map[*e] - rc_map[*e];     
   }
-
-
-  cout << ((flow1 == total_students) ? "possible " : "impossible ");
-  cout << flow1 << " " << -cost1 << endl;
+  
+  cout << flow << " " << 100 * flow - cost << endl;
 }
 
+int main() {
+  std::ios_base::sync_with_stdio(false);
+  std::cout << std::fixed << std::setprecision(0);
 
-int main(){
-  ios_base::sync_with_stdio(false);
-  int t; cin>>t;
-  while(t){
+  int t;
+  std::cin >> t;
+  for (int i = 0; i < t; ++i)
     testcase();
-    t--;
-  }
 }
