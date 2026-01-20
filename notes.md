@@ -20,9 +20,14 @@ These notes are intended for me as a way to store possible improvements/ imperfe
 # Week 7
 - Look up the solution of Germs to detail.
 - Clues we didnt construct the graph in O(nlogn). Asked question in Moodle.
+- Finish up Worm Kingdom.
+
+# Week 8
+- Finish Kingdom defense test set 3.
+- Implement the annoying problem we had. 
 
 # Week 9
-- Come back to canteen and pick an algorithm to fix negative weights.
+- Fix Idefix.
 
 # Week 10
 - DHL, got the correct solution but performance is killed due too many chained rescursive calls.
