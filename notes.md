@@ -33,5 +33,8 @@ These notes are intended for me as a way to store possible improvements/ imperfe
 - DHL, got the correct solution but performance is killed due too many chained rescursive calls.
 - Fleetrace, I need to learn the trick with having positive edges adding a constant K.
 
+# Week 11
+- Chariot RaceL go back and fix the states.
+
 # Week 14
 - Rapunzel: is correct but out of memory.
