@@ -37,6 +37,7 @@ These notes are intended for me as a way to store possible improvements/ imperfe
 - Chariot Race go back and fix the states.
 - Sith, I am pretty close just need to have a binary search over the solution.
 - Return of the Jedi only solves test case 2.
+- Go back to Lions vs Hyienas graph construct.
 
 # Week 14
 - Rapunzel: is correct but out of memory.
