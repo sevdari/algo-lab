@@ -39,5 +39,8 @@ These notes are intended for me as a way to store possible improvements/ imperfe
 - Return of the Jedi only solves test case 2.
 - Go back to Lions vs Hyienas graph construct.
 
+# Week 12
+- If you have time, reimplement skip lists;
+
 # Week 14
 - Rapunzel: is correct but out of memory.
