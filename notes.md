@@ -34,7 +34,9 @@ These notes are intended for me as a way to store possible improvements/ imperfe
 - Fleetrace, I need to learn the trick with having positive edges adding a constant K.
 
 # Week 11
-- Chariot RaceL go back and fix the states.
+- Chariot Race go back and fix the states.
+- Sith, I am pretty close just need to have a binary search over the solution.
+- Return of the Jedi only solves test case 2.
 
 # Week 14
 - Rapunzel: is correct but out of memory.
