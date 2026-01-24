@@ -41,6 +41,7 @@ These notes are intended for me as a way to store possible improvements/ imperfe
 
 # Week 12
 - If you have time, reimplement skip lists;
+- Redo Harry Potter.
 
 # Week 14
 - Rapunzel: is correct but out of memory.
