@@ -45,3 +45,4 @@ These notes are intended for me as a way to store possible improvements/ imperfe
 
 # Week 14
 - Rapunzel: is correct but out of memory.
+- How is queen of hearts a min cut?
