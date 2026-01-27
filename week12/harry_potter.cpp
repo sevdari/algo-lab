@@ -1,4 +1,3 @@
-///2
 #include <limits>
 #include <iostream>
 #include <iomanip>
@@ -24,102 +23,68 @@ typedef CGAL::Quadratic_program_solution<ET> Solution;
 int n, m;
 IT a, b, c;
 
-double ceil_to_double(const CGAL::Quotient<IT>& x)
-{
-  double a = std::ceil(CGAL::to_double(x));
-  while (a < x) a += 1;
-  while (a-1 >= x) a -= 1;
-  return a;
-}
+struct Potion {
+    int i, j, d;
+    IT e;
+};
 
-
-void solve_lp(
-    const vector<vector<int>>& p,
-    const vector<vector<IT>>& sus,
-    const vector<vector<IT>>& eff
+bool solve_lp(
+    int k,
+    const vector<Potion>& potions
   ){
   Program lp (CGAL::SMALLER, true, 0, false, 0); 
 
-  // source contraint \sum p_1j <= a
-  for(int j = 0; j < n; j++)
-    lp.set_a(p[1][j], 0,  1);
-  lp.set_b(0, a);
-  
-  // sink contraint \sum p_i0 >= b
-  for(int i = 1; i < n; i++)
-    lp.set_a(p[i][0], 1, -eff[i][0]);
-  lp.set_b(1, -b);
-  
-  // doubt constraint \sum sus_ij p_ij <= c
-  for(int i = 0; i < n; i++){
-    for(int j = 0; j < n; j++){
-      lp.set_a(p[i][j], 2, sus[i][j]);
-    }
+  for(int i = 0, j = 0; i < m; i++){
+    Potion potion = potions[i];
+    if(potion.i > k || potion.j > k) continue;
+    lp.set_a(j, potion.i, 1);
+    lp.set_a(j, potion.j, -potion.e);
+    lp.set_c(j, potion.d);
+    j++;
   }
-  lp.set_b(2, c);
+  lp.set_b(0, -b);
+  lp.set_b(1, a);
   
-  // flow constraints \sum e_ij p_ij - \sum p_ji >= 0
-  for(int i = 2; i < n; i++){
-    for(int j = 1; j < n; j++)
-      lp.set_a(p[j][i], i+1, -eff[j][i]);  // into i
-    
-    for(int j = 0; j < n; j++)
-      lp.set_a(p[i][j], i+1, 1);          // out of i
-    
-    
-    lp.set_b(i + 1, 0);
-  }
-  
-  int s_var = n * n;  
-  int constraint_idx = n + 1;
-  for(int i = 0; i < n; i++){
-    for(int j = 0; j < n; j++){
-      if(sus[i][j] == 0) continue;
-      lp.set_a(p[i][j], constraint_idx, sus[i][j]);
-      lp.set_a(s_var, constraint_idx, -1);
-      lp.set_b(constraint_idx, 0);
-      constraint_idx++;
-    }
-  }
-  
-  lp.set_c(s_var, 1);
-  
-  Solution s = CGAL::solve_linear_program(lp, ET());
-  
-    
-  if(s.is_infeasible())
-    cout << "Busted!\n";
-  else
-    cout << n << " " << ceil_to_double(s.objective_value()) << endl;
+  auto s = CGAL::solve_linear_program(lp, ET());
+  return !s.is_infeasible() && s.objective_value_numerator() / s.objective_value_denominator() <= c;
 }
 
 void testcase() {
   cin>>n>>m;
   cin>>a>>b>>c;
-  vector<vector<int>> p(n, vector<int>(n, 0));
-  for(int i = 0; i < n; i++)
-    for(int j = 0; j < n; j++)
-      p[i][j] = i * n + j;
+  vector<Potion> potions(m);
   
-  vector<vector<IT>> sus(n, vector<IT>(n, IT(0)));
-  vector<vector<IT>> eff(n, vector<IT>(n, IT(0)));
-  long e, ee;
+  long from, to, e, ee;
   for(int i = 0; i < m; i++){
-    int from, to; cin>>from>>to;
+    cin>>from>>to;
     from--; to--;
-    cin>>sus[from][to];
+    potions[i].i = from; potions[i].j = to;
+    cin>>potions[i].d;
     cin >> e >> ee;
-    eff[from][to] = CGAL::Gmpq(e, ee);
-    // cout << "Edge " << from << "->" << to << " eff=" << eff[from][to] << " sus=" << sus[from][to] << "\n";
+    potions[i].e = IT(e, ee);
   }
   
-  solve_lp(p, sus, eff);
   
+  if(!solve_lp(n-1, potions)){
+    cout << "Busted!\n"; return;
+  }
+  
+  int left = -1, right = n - 1;
+  while(right - left > 1){
+    int mid = left + (right - left) / 2;
+    if(solve_lp(mid, potions))
+      right = mid;
+    else
+      left = mid;
+  }
+  
+  cout << right + 1 << " " << "7777777" << endl;
+
 }
 
 int main() {
   std::ios_base::sync_with_stdio(false);
-    std::cout << std::fixed << std::setprecision(0);
+  std::cout << std::fixed << std::setprecision(0);
 
   int t;
   std::cin >> t;
