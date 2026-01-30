@@ -1,63 +1,63 @@
-#include<iostream>
-#include<algorithm>
-#include<vector>
-#include <climits>
-#include <numeric>
+#include<bits/stdc++.h>
 
 using namespace std;
 
-vector<vector<long>> memo(1000, vector<long>(1000, -1));
-vector<int> a(1000), b(1000);
-
-
-
-long dp(int a_top, int b_top){
-  // base cases
-  if(memo[a_top][b_top]!=-1) return memo[a_top][b_top];
-  if(a_top==1 || b_top==1){
-    memo[a_top][b_top] = (a[a_top-1] - a_top) * (b[b_top-1] - b_top);
-    return memo[a_top][b_top];
-  }
-  // dp logic
-  long min_cost = LONG_MAX;
-  for(int i = 1; i < a_top; i++){
-    for(int j = 1; j < b_top; j++){
-      long sum_a = a[a_top-1] - a[i-1];
-      long sum_b = b[b_top-1] - b[j-1];
-      long temp_cost = (sum_a - (a_top - i)) * (sum_b - (b_top - j));
-      temp_cost += memo[i][j] != -1 ? memo[i][j] : dp(i, j);
-      if(temp_cost < min_cost) min_cost = temp_cost;
-    }
-  }
-  memo[a_top][b_top] = min_cost;
-  return memo[a_top][b_top];
-}
-
 void testcase(){
   int n; cin>>n;
-  for(int i = 0; i <= n; i++){
-    for(int j = 0; j <= n; j++){
-      memo[i][j] = -1;
+  vector<int> a(n + 1), b(n + 1);
+  a[0] = 0; b[0] = 0;
+  
+  for(int i = 1; i < n + 1; i++){
+    cin>>a[i];
+    a[i] += a[i-1];
+  }
+  for(int i = 1; i < n + 1; i++){
+    cin>>b[i];
+    b[i] += b[i-1];
+  }
+  
+  // cost of pick up having i elements from a and j elements from b
+  vector<vector<int>> memo(n + 1, vector<int>(n+1, INT_MAX));
+  memo[0][0] = 0; // base case
+  
+  
+  for(int i = 1; i < n + 1; i++){
+    for(int j = 1; j < n + 1; j++){
+      if(i == 1)
+        memo[i][j] = (a[1] - 1) * (b[j] - j);
+      else if(j == 1)
+        memo[i][j] = (a[i] - i) * (b[1] - 1);
+      else{
+        // take all
+        memo[i][j] = (a[i] - i) * (b[j] - j); 
+        // take the top element from a
+        for(int k = 1; k < j; k++){
+          memo[i][j] = min(
+            memo[i][j], 
+            memo[i-1][k] + (a[i] - a[i-1] - 1) * (b[j] - b[k] - (j - k))
+          );
+        }
+        // take the top element from b
+        for(int k = 1; k < i; k++){
+          memo[i][j] = min(
+            memo[i][j], 
+            memo[k][j-1] + (a[i] - a[k] - (i - k)) * (b[j] - b[j-1] - 1)
+          );
+        }
+      }
     }
   }
-  for(int i = 0; i < n; i++)
-    cin>>a[i];
-  for(int i = 1; i < n; i++)
-    a[i] += a[i-1];
-  for(int i = 0; i < n; i++)
-    cin>>b[i];
-  for(int i = 1; i < n; i++)
-    b[i] += b[i-1];
   
-  cout << dp(n, n) << endl;
+  cout << memo[n][n] << endl;
+  
 }
-
 
 int main(){
-  ios_base::sync_with_stdio(false);
-  int t; cin>>t;
-  while(t){
-    testcase();
-    t--;
-  }
+  std::ios_base::sync_with_stdio(false);
+  std::cout << std::setiosflags(std::ios::fixed) << std::setprecision(0);
+  std::size_t t;
+  for (std::cin >> t; t > 0; --t) testcase();
+  return 0;
+
 }
+
