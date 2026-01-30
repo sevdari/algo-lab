@@ -1,62 +1,49 @@
-///1
-#include <limits>
-#include <iostream>
-#include <iomanip>
-#include <string>
-#include <cmath>
-#include <algorithm>
-#include <vector>
+#include<bits/stdc++.h>
 
 using namespace std;
 
-void testcase() {
+void testcase(){
   int n, m; cin>>n>>m;
-  vector<vector<long>> rabbits(n, vector<long>(m, 0));
+  vector<vector<long>> board(n, vector<long>(m, 0));
+  
+  // read input
   for(int i = 0; i < n; i++){
+    long current_sum = 0;
     for(int j = 0; j < m; j++){
-      cin>>rabbits[i][j];
-    }
-  }
-  vector<vector<long>> prefix_sum(n, vector<long>(m, 0));
-  for(int i = 0; i < n; i++){
-    for(int j = 0; j < m; j++){
-      prefix_sum[i][j] += rabbits[i][j];
-      if(i == 0 && j == 0) continue;
-      if(j == 0)
-        prefix_sum[i][j] += prefix_sum[i-1][j];
-      else if(i == 0)
-        prefix_sum[i][j] += prefix_sum[i][j-1];
-      else
-        prefix_sum[i][j] += prefix_sum[i][j-1] + prefix_sum[i-1][j] - prefix_sum[i-1][j-1];
+      cin>>board[i][j];
+      long original = board[i][j];
+      board[i][j] += current_sum; current_sum += original;
+      if(i > 0) board[i][j] += board[i-1][j];
     }
   }
   
-  vector<vector<long>> min_cost(n, vector<long>(m, 0));
+  vector<vector<long>> cost(n, vector<long>(m, LONG_MAX));
+  cost[0][0] = 0;
+  
   for(int i = 0; i < n; i++){
     for(int j = 0; j < m; j++){
       if(i == 0 && j == 0) continue;
-      if(i == 0)
-        min_cost[i][j] += min_cost[i][j-1] + prefix_sum[n-1][j-1] - prefix_sum[0][j-1];
-      else if(j == 0)
-        min_cost[i][j] += min_cost[i-1][j] + prefix_sum[i-1][m-1] - prefix_sum[i-1][j];
-      else{
-        long right = min_cost[i][j-1] + prefix_sum[n-1][j-1] - prefix_sum[i][j-1];
-        long down = min_cost[i-1][j] + prefix_sum[i-1][m-1] - prefix_sum[i-1][j];
-        min_cost[i][j] = min(right, down);
+      if(i == 0){
+        cost[i][j] = cost[i][j-1] + board[n-1][j-1] - board[0][j-1];
+      } else if (j == 0){
+        cost[i][j] = cost[i-1][j] + board[i-1][m-1] - board[i-1][0];
+      } else {
+        // cost from down move
+        long down_cost = cost[i-1][j] + board[i-1][m-1] - board[i-1][j];
+        // cost from right move
+        long right_cost = cost[i][j-1] + board[n-1][j-1] - board[i][j-1];
+        cost[i][j] = min(down_cost, right_cost);
       }
     }
   }
   
-  cout << min_cost[n-1][m-1] << endl;
-  
+  cout << cost[n-1][m-1] << endl;
 }
 
-int main() {
+int main(){
   std::ios_base::sync_with_stdio(false);
-    std::cout << std::fixed << std::setprecision(0);
-
-  int t;
-  std::cin >> t;
-  for (int i = 0; i < t; ++i)
-    testcase();
+  std::cout << std::setiosflags(std::ios::fixed) << std::setprecision(0);
+  std::size_t t;
+  for (std::cin >> t; t > 0; --t) testcase();
+  return 0;
 }
