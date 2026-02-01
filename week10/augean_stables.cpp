@@ -1,4 +1,3 @@
-///4
 #include<bits/stdc++.h>
 
 using namespace std;
@@ -64,7 +63,10 @@ void testcase(){
   // find best combination
   int best = 49, i = 0, j = 24;
   while(i<=24 && j>=0){
-    if(solve_lp(a[i], p[j], stalls)){
+    if(i + j >= best){
+      j--;
+    }
+    else if(solve_lp(a[i], p[j], stalls)){
       best = min(best, i + j);
       j--;
     } else {
