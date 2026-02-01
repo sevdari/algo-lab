@@ -1,93 +1,109 @@
-#include <limits>
-#include <iostream>
-#include <iomanip>
-#include <string>
-#include <cmath>
-#include <algorithm>
-#include <vector>
+///1
+#include<bits/stdc++.h>
 
 using namespace std;
 
 #include <CGAL/QP_models.h>
 #include <CGAL/QP_functions.h>
-#include <CGAL/Gmpq.h>
+#include <CGAL/Gmpz.h>
+
 // choose input type (input coefficients must fit)
-typedef CGAL::Gmpq IT;
+typedef  CGAL::Gmpq IT;
 // choose exact type for solver (CGAL::Gmpz or CGAL::Gmpq)
 typedef CGAL::Gmpq ET;
 
-// program and solution types
 typedef CGAL::Quadratic_program<IT> Program;
 typedef CGAL::Quadratic_program_solution<ET> Solution;
 
-int n, m;
-IT a, b, c;
-
-struct Potion {
-    int i, j, d;
-    IT e;
+struct Edge{
+  int from;
+  int to;
+  CGAL::Gmpq sus;
+  CGAL::Gmpq eff;
 };
 
-bool solve_lp(
-    int k,
-    const vector<Potion>& potions
-  ){
-  Program lp (CGAL::SMALLER, true, 0, false, 0); 
-
-  for(int i = 0, j = 0; i < m; i++){
-    Potion potion = potions[i];
-    if(potion.i > k || potion.j > k) continue;
-    lp.set_a(j, potion.i, 1);
-    lp.set_a(j, potion.j, -potion.e);
-    lp.set_c(j, potion.d);
-    j++;
-  }
-  lp.set_b(0, -b);
-  lp.set_b(1, a);
-  
-  auto s = CGAL::solve_linear_program(lp, ET());
-  return !s.is_infeasible() && s.objective_value_numerator() / s.objective_value_denominator() <= c;
+double ceil_to_double(const CGAL::Quotient<ET>& x)
+{
+  double a = std::ceil(CGAL::to_double(x));
+  while (a < x) a += 1;
+  while (a-1 >= x) a -= 1;
+  return a;
 }
 
-void testcase() {
-  cin>>n>>m;
-  cin>>a>>b>>c;
-  vector<Potion> potions(m);
+int n, m, a, b, c;
+
+bool solves_lp(const vector<Edge>& edges, int k){
+  Program lp (CGAL::LARGER, true, 0, false, 0);
+  int var_count = 0;
+  for(const auto& edge: edges){
+    if(edge.to == 1 || edge.from == 0) continue;
+    if(edge.to > k || edge.from > k) continue;
+    lp.set_a(var_count, edge.from, -1);
+    lp.set_a(var_count, edge.to, edge.eff);
+    lp.set_a(var_count, n, -edge.sus);
+    var_count++;
+  }
+  lp.set_b(0, b); lp.set_b(1, -a); lp.set_b(n, -c);
   
-  long from, to, e, ee;
+  Solution s = CGAL::solve_linear_program(lp, ET());
+  return !s.is_infeasible();
+}
+
+long optimal_solution(const vector<Edge>& edges, int k){
+  Program lp (CGAL::LARGER, true, 0, false, 0);
+  int var_count = 1; int max_sus = 0;
+  for(const auto& edge: edges){
+    if(edge.to == 1 || edge.from == 0) continue;
+    if(edge.to > k || edge.from > k) continue;
+    lp.set_a(var_count, edge.from, -1);
+    lp.set_a(var_count, edge.to, edge.eff);
+    lp.set_a(var_count, n, -edge.sus);
+    lp.set_a(var_count, n + var_count, -edge.sus);
+    lp.set_a(max_sus, n + var_count, 1);
+    var_count++;
+  }
+  lp.set_b(0, b); lp.set_b(1, -a); lp.set_b(n, -c);
+  lp.set_c(max_sus, 1);
+  
+  Solution s = CGAL::solve_linear_program(lp, ET());
+  return ceil_to_double(s.objective_value());
+}
+
+void testcase(){
+  cin>>n>>m>>a>>b>>c;
+  vector<Edge> edges(m);
+  
+  int from, to, e, ee;
   for(int i = 0; i < m; i++){
-    cin>>from>>to;
-    from--; to--;
-    potions[i].i = from; potions[i].j = to;
-    cin>>potions[i].d;
-    cin >> e >> ee;
-    potions[i].e = IT(e, ee);
+    cin>>from>>to; from--; to--;
+    edges[i].from = from; edges[i].to = to;
+    cin>>edges[i].sus;
+    cin>>e>>ee;
+    edges[i].eff = CGAL::Gmpq(e, ee);
   }
   
-  
-  if(!solve_lp(n-1, potions)){
+  if(!solves_lp(edges, n)){
     cout << "Busted!\n"; return;
   }
   
-  int left = -1, right = n - 1;
+  int left = 1, right = n;
   while(right - left > 1){
     int mid = left + (right - left) / 2;
-    if(solve_lp(mid, potions))
+    if(solves_lp(edges, mid)){
       right = mid;
-    else
+    } else {
       left = mid;
+    }
   }
   
-  cout << right + 1 << " " << "7777777" << endl;
-
+  cout << right + 1 << " " << optimal_solution(edges, right) << endl;
+  
 }
 
-int main() {
+int main(){
   std::ios_base::sync_with_stdio(false);
-  std::cout << std::fixed << std::setprecision(0);
-
-  int t;
-  std::cin >> t;
-  for (int i = 0; i < t; ++i)
-    testcase();
+  std::cout << std::setiosflags(std::ios::fixed) << std::setprecision(0);
+  std::size_t t;
+  for (std::cin >> t; t > 0; --t) testcase();
+  return 0;
 }
