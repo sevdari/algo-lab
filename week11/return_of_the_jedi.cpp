@@ -86,7 +86,7 @@ void testcase(){
       if(comp[i]==comp[j]) continue;
       if(i == u && j == v) continue;
       if(i == v && j == u) continue;
-      best = min(best, curr_weight + min_add); break;
+      best = min(best, curr_weight + w); break;
     }
   }
   
