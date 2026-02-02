@@ -3,11 +3,9 @@ These notes are intended for me as a way to store possible improvements/ imperfe
 # Week 1
 
 # Week 2
-- Severus Snape got us bad.
 
 # Week 4
 - First Hit exercise does not implement clipping. Consider implementing it as exam prep.
-- Review floot_to_double func.
 
 # Week 5
 - Fix Attack of Clones.
@@ -30,8 +28,7 @@ These notes are intended for me as a way to store possible improvements/ imperfe
 - Fix Idefix.
 
 # Week 10
-- DHL, got the correct solution but performance is killed due too many chained rescursive calls.
-- Fleetrace, I need to learn the trick with having positive edges adding a constant K.
+
 
 # Week 11
 - Chariot Race go back and fix the states.
@@ -41,7 +38,6 @@ These notes are intended for me as a way to store possible improvements/ imperfe
 
 # Week 12
 - If you have time, reimplement skip lists;
-- Redo Harry Potter.
 
 # Week 14
 - Rapunzel: is correct but out of memory.
