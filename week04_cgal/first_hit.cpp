@@ -1,69 +1,97 @@
-/*
-This solution gets only 90/100 points 
-due to not having implemented clipping.
-*/
-#include <limits>
-#include <cmath>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include<bits/stdc++.h>
+
 using namespace std;
 
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+
 typedef CGAL::Exact_predicates_exact_constructions_kernel K;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel IK;
+
+
+#include <CGAL/Ray_2.h>
+#include <CGAL/Segment_2.h>
+
 typedef K::Point_2 P;
-typedef K::Ray_2   R;
 typedef K::Segment_2 S;
 
-double floor_to_double(const K::FT& x) {
-  double a = floor(CGAL::to_double(x));
+
+double floor_to_double(const K::FT& x)
+{
+  double a = std::floor(CGAL::to_double(x));
   while (a > x) a -= 1;
   while (a+1 <= x) a += 1;
   return a;
 }
 
 void testcase(int n){
-  long x,y,a,b; cin >> x >> y >> a >> b;
-  P start(x,y), dir(a,b);
-  R ray(start, dir);
-
-  bool have_hit = false;
-  P best;
-  K::FT best_dist;
-
-  for (int i=0;i<n;i++){
-    long r,s,t,u; cin >> r >> s >> t >> u;
-    S seg(P(r,s), P(t,u));
-
-    if (!CGAL::do_intersect(ray, seg)) continue;
-
-    auto o = CGAL::intersection(ray, seg);
-    if (!o) continue;
-
-    if (const P* op = boost::get<P>(&*o)) {
-      K::FT d = CGAL::squared_distance(*op, start);
-      if (!have_hit || d < best_dist) { have_hit = true; best = *op; best_dist = d; }
-    } else if (const S* os = boost::get<S>(&*o)) {
-      P p1 = os->source(), p2 = os->target();
-      K::FT d1 = CGAL::squared_distance(start, p1);
-      K::FT d2 = CGAL::squared_distance(start, p2);
-      P nearer = (d1 < d2 ? p1 : p2);
-      K::FT dn = (d1 < d2 ? d1 : d2);
-      if (!have_hit || dn < best_dist) { have_hit = true; best = nearer; best_dist = dn; }
+  long x, y, a, b; cin>>x>>y>>a>>b;
+  K::Point_2 start(x, y);
+  K::Ray_2 r(start, K::Point_2(a, b));
+  K::Segment_2 rs;
+  
+  vector<K::Segment_2> obs;
+  for(int i = 0; i < n; i++){
+    cin>>x>>y>>a>>b;
+    obs.push_back(K::Segment_2(K::Point_2(x, y), K::Point_2(a, b)));
+  }
+  random_shuffle(obs.begin(), obs.end());
+  
+  // clip the ray into a segment
+  int j = 0;
+  for (; j < n; ++j){
+    if (CGAL::do_intersect(r, obs[j])){
+      auto o = CGAL::intersection(r,obs[j]);
+      const P* op = boost::get<P>(&*o);
+      const S* os = boost::get<S>(&*o);
+      if (op){
+        rs = K::Segment_2(start, *op); break;
+      }else if (os){
+        if(CGAL::squared_distance(start, os->source()) <= 
+          CGAL::squared_distance(start, os->target())  
+        )
+          rs =  K::Segment_2(start, os->source());
+        else
+          rs =  K::Segment_2(start, os->target());
+      }
+      break;
     }
   }
-
-  if (!have_hit) {
-    cout << "no" << endl;
-  } else {
-    cout << floor_to_double(best.x()) << " "
-         << floor_to_double(best.y()) << endl;
+  
+  // if unclipped return
+  if(j==n){
+    cout << "no\n"; return;
   }
+  
+  // used clipped ray for further checks
+  for (; j < n; ++j){
+    if (CGAL::do_intersect(rs, obs[j])){
+      auto o = CGAL::intersection(rs, obs[j]);
+      const P* op = boost::get<P>(&*o);
+      const S* os = boost::get<S>(&*o);
+      if (op && CGAL::squared_distance(start, *op) <= rs.squared_length()){
+        rs = K::Segment_2(start, *op);
+      }else{
+        if(CGAL::squared_distance(start, os->source()) <= rs.squared_length())
+          rs =  K::Segment_2(start, os->source());
+        else if (CGAL::squared_distance(start, os->target()) <= rs.squared_length())
+          rs =  K::Segment_2(start, os->target());
+      }
+    }
+  }
+  
+  cout << floor_to_double(rs.target().x()) << " " 
+       << floor_to_double(rs.target().y()) << endl;
+  
 }
 
 int main(){
-  ios::sync_with_stdio(false); cin.tie(nullptr);
-	std::cout << std::setiosflags(std::ios::fixed) << std::setprecision(0);
-  int n; cin>>n;
-  while (n!=0) { 
-    testcase(n); 
-    cin >> n; 
+  std::ios_base::sync_with_stdio(false);
+  std::cout << std::setiosflags(std::ios::fixed) << std::setprecision(0);
+  std::size_t t; cin>>t;
+  while (t > 0) {
+    testcase(t);
+    cin>>t;
   }
+  return 0;
 }
