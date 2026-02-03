@@ -57,7 +57,7 @@ void testcase() {
   vector<int> supply(V), demand(V);
   for(int i = 0; i < V; i++){
     cin>>supply[i]>>demand[i];
-    adder.add_edge(i, v_sink, demand[i]);
+    // adder.add_edge(i, v_sink, demand[i]);
     total_demand += demand[i];
   }
   // read edges
@@ -69,7 +69,13 @@ void testcase() {
   }
   
   for(int i = 0; i < V; i++){
-    adder.add_edge(v_source, i, supply[i]);
+    if(supply[i] < 0){
+      adder.add_edge(i, v_sink, demand[i] - supply[i]);
+      total_demand += -supply[i];
+    } else{
+      adder.add_edge(v_source, i, supply[i]);
+      adder.add_edge(i, v_sink, demand[i]);
+    }
   }
   
   long flow = boost::push_relabel_max_flow(G, v_source, v_sink);
