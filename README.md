@@ -9,7 +9,7 @@
 | **3** | [Lord Voldemort](week03_bgl/lord_voldemort.cpp) | [First Steps with BGL](week03_bgl/first_steps_with_bgl.cpp) | [Ant Challenge](week03_bgl/ant_challenge.cpp) | [Buddy Selection](week03_bgl/buddy_selection.cpp) | [Important Bridges](week03_bgl/important_bridges.cpp) |
 | **4** | [Fighting Pits of Meeren](week04_cgal/fighting_pits_of_meerens.cpp) | [Hit](week04_cgal/hit.cpp) | [First Hit](week04_cgal/first_hit.cpp) | [Antenna](week04_cgal/antenna.cpp) | [Hiking Maps](week04_cgal/hiking_maps.cpp) |
 | **5** | [Planet Express](week05_greedy/planet_express.cpp) | [Moving Books](week05_greedy/moving_books.cpp) | [Asterix the Gaul](week05_greedy/asterix_the_gaul.cpp) | [Boats](week05_greedy/boats.cpp)  | [Attack of the Clones](week05_greedy/attack_of_the_clones.cpp) |
-| **6** | [Motorcycles](week06_flows/motorcycles.cpp) | [Tiles](week06_flows/tiles.cpp) | [Coin Tossing](week06_flows/coin-tossing.cpp) | [London](week06_flows/london.cpp) | |
+| **6** | [Motorcycles](week06_flows/motorcycles.cpp) | [Tiles](week06_flows/tiles.cpp) | [Coin Tossing](week06_flows/coin-tossing.cpp) | [London](week06_flows/london.cpp) | [Knights](week06_flows/knights.cpp) |
 | **7** |  | [Bistro](week07_proximity/bistro.cpp) | [Germs](week07_proximity/germs.cpp) | [H1N1](week07_proximity/h1n1.cpp) | [Clues](week07_proximity/clues.cpp) |
 | **8** | [Kingdom Defense](week08_lp/kingdom_defense.cpp) | [Maximise it](week08_lp/maximise_it.cpp) | [Diet](week08_lp/diet.cpp) |[In Ball](week08_lp/inball.cpp) | |
 | **9** | [Idefix](week09_advanced_flows/idefix.cpp) | [Placing Knights](week09_advanced_flows/placing_knights.cpp) | [Real Estate](week09_advanced_flows/real_estate.cpp) | [Canteen](week09_advanced_flows/canteen.cpp) | [Algocoon](week09_advanced_flows/algocoon.cpp) |
